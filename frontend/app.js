@@ -1,3 +1,15 @@
+// ---- Depurador temporal en pantalla (borrar despues) ----
+const cajaDepurador = document.getElementById("depurador");
+function log(msg) {
+  cajaDepurador.style.display = "block";
+  cajaDepurador.innerHTML += msg + "<br>";
+  cajaDepurador.scrollTop = cajaDepurador.scrollHeight;
+}
+window.onerror = (msg, url, linea, col) => log(`ERROR: ${msg} (linea ${linea})`);
+document.addEventListener("touchstart", (e) => log(`toque en: ${e.target.tagName}#${e.target.id || "(sin id)"}`), true);
+document.addEventListener("click", (e) => log(`click en: ${e.target.tagName}#${e.target.id || "(sin id)"}`), true);
+log("Depurador cargado, esperando toques...");
+
 // ==========================================================
 // Configuracion
 // ==========================================================
