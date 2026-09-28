@@ -5,10 +5,39 @@
 // ==========================================================
 const API_URL = `http://${location.hostname}:3000`;
 
-// Clave de idempotencia: se genera UNA vez al cargar la pagina,
-// y se reusa si el usuario reintenta el mismo registro (doble clic, mala señal, etc.)
-// Si el registro se completa con exito, se genera una nueva para el siguiente perrito.
-let idempotencyKey = crypto.randomUUID();
+// Clave de idempotencia compatible con PC y celular
+function generarUUID() {
+  if (window.crypto && typeof window.crypto.randomUUID === "function") {
+    return window.crypto.randomUUID();
+  }
+
+  if (window.crypto && typeof window.crypto.getRandomValues === "function") {
+    const bytes = new Uint8Array(16);
+    window.crypto.getRandomValues(bytes);
+
+    // UUID versión 4
+    bytes[6] = (bytes[6] & 0x0f) | 0x40;
+    bytes[8] = (bytes[8] & 0x3f) | 0x80;
+
+    const hex = Array.from(bytes).map(b =>
+      b.toString(16).padStart(2, "0")
+    );
+
+    return (
+      hex.slice(0, 4).join("") + "-" +
+      hex.slice(4, 6).join("") + "-" +
+      hex.slice(6, 8).join("") + "-" +
+      hex.slice(8, 10).join("") + "-" +
+      hex.slice(10, 16).join("")
+    );
+  }
+
+  // Último respaldo
+  return Date.now().toString(36) + "-" +
+         Math.random().toString(36).substring(2);
+}
+
+let idempotencyKey = generarUUID();
 
 // Huellas de las fotos ya registradas en esta sesion (para avisar si se repite la misma foto)
 const huellasEnviadas = new Set();
@@ -215,7 +244,7 @@ form.addEventListener("submit", async (e) => {
     huellasEnviadas.add(huellaDe(archivoFoto));
     form.reset();
     previewFoto.classList.add("oculto");
-    idempotencyKey = crypto.randomUUID(); // nueva clave para el SIGUIENTE perrito
+   idempotencyKey = generarUUID(); // nueva clave para el SIGUIENTE perrito
   } catch (err) {
     console.error(err);
     mostrarMensaje("No se pudo conectar con el servidor", "error");
