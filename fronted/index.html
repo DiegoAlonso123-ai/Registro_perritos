@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Registro de Perritos de la Calle</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+<link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header>
+    <h1>🐕 Perritos de la Calle</h1>
+  </header>
+
+  <nav class="tabs">
+    <button class="tab-btn activo" data-tab="registrar">Registrar</button>
+    <button class="tab-btn" data-tab="mapa">Mapa</button>
+    <button class="tab-btn" data-tab="lista">Lista</button>
+  </nav>
+
+  <!-- PESTAÑA: REGISTRAR -->
+  <section id="tab-registrar" class="tab-contenido activo">
+    <form id="form-perrito">
+      <label>Foto *
+        <input type="file" id="foto" accept="image/*" capture="environment" required />
+        <img id="preview-foto" class="oculto" />
+      </label>
+
+      <label>Nombre *
+        <input type="text" id="nombre" required placeholder="Ej. Firulais" />
+      </label>
+
+      <label>Raza
+        <select id="raza_id">
+          <option value="">Selecciona (opcional)</option>
+        </select>
+      </label>
+
+      <label>Color principal *
+        <select id="color_principal_id" required>
+          <option value="">Selecciona</option>
+        </select>
+      </label>
+
+      <label>Colores adicionales (máximo 2)
+        <select id="colores_adicionales" multiple size="4"></select>
+        <small>Ctrl+clic (o toca varias veces en celular) para elegir hasta 2. No repitas el color principal.</small>
+      </label>
+
+      <label>Ubicación *</label>
+      <div id="mapa-registro"></div>
+      <button type="button" id="btn-mi-ubicacion">📍 Usar mi ubicación actual</button>
+      <small>O toca/arrastra el pin en el mapa para moverlo a mano</small>
+      <div id="coords-actuales" class="coords"></div>
+
+      <div id="mensaje-form" class="mensaje"></div>
+
+      <button type="submit" id="btn-guardar">Registrar perrito</button>
+    </form>
+  </section>
+
+  <!-- PESTAÑA: MAPA -->
+  <section id="tab-mapa" class="tab-contenido">
+    <div id="mapa-general"></div>
+  </section>
+
+  <!-- PESTAÑA: LISTA -->
+  <section id="tab-lista" class="tab-contenido">
+    <div id="lista-perritos" class="lista-perritos"></div>
+  </section>
+
+  <!-- MODAL DE DETALLE -->
+  <div id="modal-detalle" class="modal oculto">
+    <div class="modal-contenido">
+      <button id="cerrar-modal">✕</button>
+      <div id="detalle-cuerpo"></div>
+    </div>
+  </div>
+
+  <!-- MODAL DE REGISTRO EXITOSO -->
+  <div id="modal-exito" class="modal oculto">
+    <div class="modal-contenido modal-exito">
+      <h2 id="exito-titulo">¡Perrito registrado!</h2>
+      <p id="exito-texto"></p>
+      <div class="exito-botones">
+        <button type="button" id="btn-registrar-otro">Registrar otro</button>
+        <button type="button" id="btn-ver-lista" class="secundario">Ver lista</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
