@@ -125,7 +125,17 @@ Ver `backend/.env.example` para la plantilla completa (sin contraseñas reales).
 
 ## Capturas de pantalla
 
-_(Agregar aquí capturas del formulario, el mapa, la lista y el detalle de un perrito)_
+### Formulario de registro
+![Formulario de registro](capturas/formulario.png)
+
+### Mapa con los perritos registrados
+![Mapa](capturas/mapa.png)
+
+### Lista de perritos
+![Lista](capturas/lista.png)
+
+### Detalle de un perrito
+![Detalle](capturas/detalle.png)
 
 ## Problemas comunes
 
