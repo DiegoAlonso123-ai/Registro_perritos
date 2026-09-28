@@ -1,8 +1,8 @@
 # Registro de Perritos de la Calle
 
-Aplicación web para registrar perritos encontrados en la calle: foto, nombre, raza, colores y ubicación en un mapa, para que rescatistas y vecinos sepan qué perros hay y dónde andan.
+Aplicación web para registrar perritos encontrados en la calle: foto, nombre, raza, colores y ubicación en un mapa, para que rescatistas, vecinos y asociaciones sepan qué perros hay, cómo identificarlos y en qué zona andan.
 
-Funciona tanto en **computadora** como en **celular**. Desde el celular se puede tomar la foto directo con la cámara; desde la computadora, se sube un archivo de imagen ya existente (la cámara web no está soportada, solo la cámara trasera del celular vía `capture="environment"`). El resto de las funciones (mapa, lista, detalle, validaciones) funciona igual en ambos.
+Está pensada para usarse tanto en **computadora** como en **celular**. Desde el celular, el campo de foto ofrece abrir la cámara; desde la computadora se sube un archivo de imagen existente. La prueba en un celular real está pendiente (ver la sección correspondiente).
 
 ## Integrantes del equipo
 
@@ -12,81 +12,110 @@ Funciona tanto en **computadora** como en **celular**. Desde el celular se puede
 | Jose Uriel Coronado Jaramillo | Frontend |
 | Oscar Osvaldo Berlanga Sierra | DBA |
 
+## Qué hace la aplicación
+
+- **Registrar** un perrito: foto (cámara o archivo JPG/PNG/WEBP), nombre, raza (opcional, de catálogo), color principal (obligatorio, de catálogo), 0 a 2 colores adicionales y ubicación (pin en el mapa: ubicación actual o movido a mano). La fecha la pone el sistema.
+- **Mapa** con un pin por perrito; al tocarlo se ve su foto, nombre, raza y color.
+- **Lista** de perritos con foto en miniatura.
+- **Detalle** de cada perrito (al tocar su tarjeta).
+- **Validaciones** en el frontend y en el backend, con mensajes entendibles (por ejemplo "Falta la foto").
+- **Aviso de registro:** al guardar, un cuadro confirma "¡Perrito registrado!". Si el backend detecta que ese envío ya se había guardado, el cuadro dice "Este perrito ya estaba registrado". Si eliges la misma foto que ya registraste en la sesión, la app pide confirmación antes de enviar.
+
 ## Tecnologías y versiones exactas
 
 - **Backend:** Node.js v20.20.1 + Express 4.19.2
-- **Base de datos:** MySQL Community Server 8.0.45 (instalado directo en Windows, sin Docker)
-- **Frontend:** HTML, CSS y JavaScript puro (sin frameworks) + Leaflet 1.9.4 (mapas, vía CDN, sin API key)
-- **Otras librerías del backend:** mysql2 ^3.11.0, multer ^1.4.5-lts.1, file-type ^16.5.4, uuid ^9.0.1, cors ^2.8.5, dotenv ^16.4.5
+- **Base de datos:** MySQL Community Server 8.0.45, instalado directo en Windows
+- **Frontend:** HTML, CSS y JavaScript puro (sin frameworks) + Leaflet 1.9.4 con mapas de OpenStreetMap, cargados por CDN (sin API key)
+- **Librerías del backend:** mysql2 ^3.11.0, multer ^1.4.5-lts.1, file-type ^16.5.4, uuid ^9.0.1, cors ^2.8.5, dotenv ^16.4.5, nodemon ^3.1.4 (desarrollo)
 
 > Este proyecto **no usa Docker**. Todo se instala directo en la máquina.
 
 ## Requisitos previos
 
-- [Node.js](https://nodejs.org/) v18 o superior
-- [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) 8.0 o superior
+- [Node.js](https://nodejs.org/) v18 o superior (probado con v20.20.1)
+- [MySQL Community Server](https://dev.mysql.com/downloads/mysql/) 8.0 o superior (probado con 8.0.45)
 - [MySQL Workbench](https://dev.mysql.com/downloads/workbench/) (opcional, para administrar la base visualmente)
-- Un navegador moderno (Chrome, Edge, Firefox)
-- La extensión **Live Server** de VS Code (o cualquier servidor estático local) para correr el frontend
+- Un navegador moderno (Chrome, Edge o Firefox)
+- La extensión **Live Server** de VS Code (o cualquier servidor estático local) para el frontend
+- Git
 
 ## Instalación paso a paso
 
 ### 1. Clonar el repositorio
 
 ```bash
-git clone https://github.com/TU-USUARIO/Registro_perritos.git
+git clone https://github.com/DiegoAlonso123-ai/Registro_perritos.git
 cd Registro_perritos
 ```
 
 ### 2. Crear la base de datos
 
-Con MySQL Server corriendo, conéctate (por ejemplo con MySQL Workbench o la terminal `mysql`) y ejecuta los scripts en orden:
+Con MySQL Server corriendo, ejecuta los scripts en orden. Estos comandos funcionan en PowerShell y en CMD, y te piden la contraseña de `root` cada vez:
 
-```bash
-mysql -u root -p < database/schema.sql
-mysql -u root -p < database/seed.sql
+```powershell
+cmd /c "mysql -u root -p < database\schema.sql"
+cmd /c "mysql -u root -p < database\seed.sql"
+cmd /c "mysql -u root -p < database\seed-perritos.sql"
 ```
 
-Esto crea la base `perritos_db`, sus 4 tablas, y carga los catálogos de razas y colores (12 razas, 12 colores).
+Esto crea la base `perritos_db` con sus 4 tablas, carga los catálogos (12 razas y 12 colores) y 15 perritos de prueba. El último script (`seed-perritos.sql`) es opcional: solo carga datos de ejemplo.
 
-> Si prefieres hacerlo visualmente: abre `database/schema.sql` en MySQL Workbench y ejecútalo completo (`Ctrl+Shift+Enter`), luego haz lo mismo con `database/seed.sql`.
+> Alternativa visual: en MySQL Workbench abre cada archivo (`database/schema.sql`, `database/seed.sql` y, si quieres los datos de prueba, `database/seed-perritos.sql`) y ejecútalo completo con `Ctrl+Shift+Enter`, en ese orden.
 
-### 3. Configurar el backend
+El diagrama entidad-relación está en `database/diagrama-entidad-relacion.png`.
+
+### 3. Crear la carpeta de imágenes (fuera del proyecto)
+
+Las fotos **no** se guardan dentro del repositorio. Se guardan en un directorio externo definido por la variable `RUTA_IMAGENES`:
+
+```powershell
+mkdir C:\perritos-imagenes
+copy database\fotos-prueba\* C:\perritos-imagenes\
+```
+
+Las fotos de `database/fotos-prueba/` son las de los 15 perritos de prueba; al copiarlas a `RUTA_IMAGENES`, el backend puede mostrarlas. Si no cargas los datos de prueba, puedes omitir el `copy`.
+
+### 4. Configurar el backend
 
 ```bash
 cd backend
 npm install
 ```
 
-Crea un archivo `.env` (usa `.env.example` como base) con tus propios datos:
+Copia `backend/.env.example` a `backend/.env` y ajusta tus valores:
 
+```
+DB_HOST=localhost
+DB_PORT=3306
+DB_USER=root
+DB_PASSWORD=tu_contraseña_de_mysql
+DB_NAME=perritos_db
 
-Crea la carpeta donde se guardarán las fotos (fuera del proyecto):
+RUTA_IMAGENES=C:\perritos-imagenes
 
-```bash
-mkdir C:\perritos-imagenes
+PORT=3000
 ```
 
-### 4. Correr el backend
+### 5. Correr el backend
 
 ```bash
 npm run dev
 ```
 
-Deberías ver:
+Debes ver:
+
+```
 Conectado a MySQL correctamente.
 Servidor backend corriendo en http://localhost:3000
+```
 
+El backend queda en **http://localhost:3000**.
 
-El backend queda disponible en **`http://localhost:3000`**.
+### 6. Correr el frontend
 
-### 5. Correr el frontend
+Abre la carpeta del proyecto en VS Code, clic derecho sobre `frontend/index.html` y elige **Open with Live Server** (o el botón "Go Live" de abajo a la derecha). Queda en algo como **http://127.0.0.1:5500/frontend/index.html**.
 
-Abre la carpeta `frontend/` en VS Code, clic derecho sobre `index.html` → **"Open with Live Server"** (o el botón "Go Live" abajo a la derecha).
-
-**Importante:** no abras `index.html` con doble clic — el navegador bloquea la cámara y la ubicación si no se sirve por `http://localhost` o `https://`.
-
-El frontend queda disponible en algo como **`http://127.0.0.1:5500`**.
+> No abras `index.html` con doble clic: el navegador bloquea la cámara y la ubicación fuera de `http://localhost` o `https://`.
 
 ## Configuración (variables de entorno)
 
@@ -95,21 +124,33 @@ El frontend queda disponible en algo como **`http://127.0.0.1:5500`**.
 | `DB_HOST` | `localhost` | Host de MySQL |
 | `DB_PORT` | `3306` | Puerto de MySQL |
 | `DB_USER` | `root` | Usuario de MySQL |
-| `DB_PASSWORD` | *(tu contraseña)* | Contraseña de MySQL |
+| `DB_PASSWORD` | `tu_contraseña_de_mysql` | Contraseña de MySQL (nunca se sube a Git) |
 | `DB_NAME` | `perritos_db` | Nombre de la base de datos |
 | `RUTA_IMAGENES` | `C:\perritos-imagenes` | Carpeta fuera del proyecto donde se guardan las fotos |
-| `PORT` | `3000` | Puerto donde corre el backend |
+| `PORT` | `3000` | Puerto del backend |
 
-Ver `backend/.env.example` para la plantilla completa (sin contraseñas reales).
+El archivo `.env` está en `.gitignore`. La plantilla sin contraseñas es `backend/.env.example`.
+
+En el frontend, la URL del backend está en la primera línea de `frontend/app.js` (`API_URL`).
+
+## Almacenamiento de imágenes
+
+- Las fotos se guardan en disco, en la ruta `RUTA_IMAGENES`, **fuera** de cualquier carpeta del código o de despliegue.
+- El backend **genera el nombre** del archivo (un UUID); nunca usa el nombre que mandó el usuario.
+- El backend **valida el contenido real** del archivo (lee sus bytes con `file-type`), no solo la extensión. Solo acepta JPG, PNG y WEBP.
+- Las imágenes se sirven por el endpoint `GET /api/imagenes/:nombre`; la carpeta nunca se expone directamente. El endpoint también protege contra rutas del tipo `../`.
+- La carpeta `database/fotos-prueba/` del repositorio es solo material de instalación (fotos ligeras de los perritos de prueba). El backend nunca la sirve ni la usa.
 
 ## Probarlo desde un celular en la misma red
 
-1. Encuentra la IP local de tu computadora: en PowerShell, `ipconfig` → busca "Dirección IPv4" (ej. `192.168.1.50`).
-2. En `frontend/app.js`, cambia temporalmente la línea `const API_URL = "http://localhost:3000";` por `const API_URL = "http://192.168.1.50:3000";` (usa tu propia IP).
-3. Abre el Firewall de Windows y permite conexiones entrantes al puerto 3000 (Panel de Control > Firewall de Windows Defender > Configuración avanzada > Regla de entrada nueva > Puerto > TCP 3000 > Permitir).
-4. Asegúrate de que Live Server también sea accesible desde otros dispositivos de la red (en su configuración, revisa que no esté limitado a `127.0.0.1`).
-5. Desde el celular (conectado al mismo WiFi), entra a `http://192.168.1.50:5500` (usa la IP y el puerto que te dé Live Server).
-6. Prueba tomar una foto directo con la cámara del celular y registra un perrito.
+> **Pendiente:** esta prueba aún no se ha hecho en un celular real. Estos son los pasos previstos y se actualizarán cuando se compruebe.
+
+1. Averigua la IP de tu computadora: en PowerShell, `ipconfig` y busca "Dirección IPv4".
+2. En `frontend/app.js`, cambia temporalmente `API_URL` para que apunte a esa IP en vez de `localhost`.
+3. Permite en el Firewall de Windows los puertos 3000 (backend) y 5500 (Live Server).
+4. Con el celular en el mismo WiFi, abre la dirección del frontend usando esa IP.
+
+**Nota:** el navegador solo da acceso a la ubicación (y a la cámara web) en `https` o `localhost`. Por eso, entrando por una IP con `http`, el botón "Usar mi ubicación actual" puede fallar; en ese caso se puede mover el pin a mano.
 
 ## Endpoints de la API
 
@@ -117,11 +158,25 @@ Ver `backend/.env.example` para la plantilla completa (sin contraseñas reales).
 |---|---|---|
 | GET | `/api/razas` | Catálogo de razas |
 | GET | `/api/colores` | Catálogo de colores |
-| GET | `/api/perritos` | Lista todos los perritos (con JOIN a raza y color) |
+| GET | `/api/perritos` | Lista de perritos (con `JOIN` a raza y color) |
 | GET | `/api/perritos/:id` | Detalle de un perrito, con sus colores adicionales |
-| POST | `/api/perritos` | Registrar un perrito nuevo (multipart/form-data, con foto) |
+| POST | `/api/perritos` | Registra un perrito (`multipart/form-data`, con foto) |
 | GET | `/api/perritos/estadisticas/colores` | Cuántos perritos hay por color (agregación) |
-| GET | `/api/imagenes/:nombre` | Sirve una imagen guardada (nunca se expone la carpeta directamente) |
+| GET | `/api/imagenes/:nombre` | Sirve una imagen guardada |
+
+### Campos de `POST /api/perritos`
+
+| Campo | Obligatorio | Regla |
+|---|---|---|
+| `foto` | Sí | Archivo JPG, PNG o WEBP (máx. 8 MB) |
+| `nombre` | Sí | Texto no vacío; solo espacios no cuenta |
+| `raza_id` | No | Id del catálogo de razas |
+| `color_principal_id` | Sí | Id del catálogo de colores |
+| `colores_adicionales` | No | Arreglo JSON de ids, por ejemplo `[2,5]`. Máximo 2, sin repetir entre sí ni repetir el principal |
+| `ubicacion_lat`, `ubicacion_lng` | Sí | Coordenadas del pin |
+| `idempotency_key` | Sí | Clave única del envío (ver sección de idempotencia) |
+
+Respuestas de error en JSON con mensaje entendible, por ejemplo `{ "error": "Falta la foto" }`. La fecha de registro la pone el sistema.
 
 ## Capturas de pantalla
 
@@ -137,38 +192,91 @@ Ver `backend/.env.example` para la plantilla completa (sin contraseñas reales).
 ### Detalle de un perrito
 ![Detalle](capturas/detalle.png)
 
+## Estructura del repositorio
+
+```
+Registro_perritos/
+├── backend/
+│   ├── server.js            # arranque de la API y endpoint de imágenes
+│   ├── db.js                # conexión a MySQL
+│   ├── imagenes.js          # guardado y validación de fotos
+│   ├── routes/
+│   │   ├── perritos.js      # registro, lista, detalle, estadística
+│   │   └── catalogos.js     # razas y colores
+│   ├── .env.example
+│   └── package.json
+├── database/
+│   ├── schema.sql           # creación de tablas
+│   ├── seed.sql             # catálogos de razas y colores
+│   ├── seed-perritos.sql    # 15 perritos de prueba
+│   ├── fotos-prueba/        # fotos de los perritos de prueba
+│   └── diagrama-entidad-relacion.png
+├── frontend/
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+├── capturas/                # imágenes usadas en este README
+└── README.md
+```
+
+## Flujo de trabajo con Git
+
+- Un solo repositorio para el equipo.
+- Se trabaja en ramas (`feature/...`, `docs/...`) y se fusiona a `main` mediante pull request revisado por otro integrante.
+- Los mensajes de commit describen qué cambió.
+- No se suben contraseñas (`.env`), `node_modules/` ni fotos pesadas; para eso está el `.gitignore`.
+
 ## Problemas comunes
 
-- **"No se pudo conectar con el servidor" en el frontend** → verifica que el backend esté corriendo (`npm run dev` dentro de `backend/`) y que no haya errores en su terminal.
-- **El backend no conecta a MySQL** → confirma que el servicio `MySQL80` esté corriendo (Windows: busca "Servicios" en el menú de inicio) y que la contraseña en `.env` sea la correcta.
-- **La cámara o la ubicación no funcionan** → asegúrate de abrir el frontend con Live Server (`http://localhost:...`), nunca con doble clic al archivo.
-- **"El archivo no es una imagen valida"** → el backend valida el contenido real del archivo, no solo su extensión; asegúrate de subir un JPG, PNG o WEBP real.
-- **Puerto 3306 ocupado** → si tienes otro MySQL corriendo (por ejemplo, uno instalado junto con XAMPP), cambia `DB_PORT` en `.env` y en la configuración de tu servidor.
+- **"No se pudo conectar con el servidor" en el frontend:** verifica que el backend esté corriendo (`npm run dev` dentro de `backend/`) y que `API_URL` en `frontend/app.js` apunte a él.
+- **El backend no conecta a MySQL:** confirma que el servicio `MySQL80` esté corriendo (busca "Servicios" en Windows) y que la contraseña en `.env` sea correcta.
+- **Las razas y colores no cargan en el formulario:** falta correr `database/seed.sql`, o el backend no está corriendo.
+- **Error "No database selected" al correr un script:** el script no trae la línea `USE perritos_db;` al inicio. Agrégala o ejecútalo desde MySQL Workbench con `perritos_db` como schema por defecto.
+- **La cámara o la ubicación no funcionan:** abre el frontend con Live Server (`http://localhost` o `http://127.0.0.1`), no con doble clic. En el celular, la ubicación requiere `https`.
+- **"El archivo no es una imagen valida":** el backend revisa el contenido real del archivo; sube un JPG, PNG o WEBP verdadero.
+- **Error `ERR_PACKAGE_PATH_NOT_EXPORTED` con `file-type`:** se necesita la versión 16 (`"file-type": "^16.5.4"`); las versiones nuevas son solo ESM y no funcionan con `require`.
+- **Puerto 3306 ocupado:** si hay otro MySQL corriendo, cambia `DB_PORT` en `.env` al puerto correcto.
+- **Las fotos no se ven:** revisa que la carpeta de `RUTA_IMAGENES` exista y contenga los archivos que la base referencia (paso 3 de la instalación).
 
 ## Paradigmas usados en el proyecto
 
-- **Declarativo (SQL):** todo el filtrado, ordenamiento y agregación de datos se resuelve en las consultas SQL, no en el código de la aplicación. Ejemplos en `backend/routes/perritos.js`:
-  - La consulta de `GET /api/perritos` usa `JOIN` para combinar perritos con su raza y color, y `ORDER BY` para ordenarlos — el manejador de base de datos hace el trabajo, no un ciclo en JavaScript.
-  - La consulta de `GET /api/perritos/estadisticas/colores` usa `GROUP BY` y `COUNT(*)` para la agregación (cuántos perritos hay por color).
-  - HTML y CSS en el frontend también son declarativos: describen qué debe verse, no los pasos para dibujarlo.
+**Declarativo (SQL, HTML y CSS).** El filtrado, ordenamiento y agregación de datos se resuelven en SQL; el manejador de base de datos decide cómo ejecutarlos. En `backend/routes/perritos.js`:
+- `GET /api/perritos` usa `JOIN` entre perritos, razas y colores, y `ORDER BY` para ordenar.
+- `GET /api/perritos/estadisticas/colores` usa `JOIN`, `GROUP BY` y `COUNT(*)` para contar perritos por color.
+- HTML y CSS también son declarativos: describen qué debe verse, no cómo dibujarlo.
 
-- **Imperativo:** la lógica paso a paso de validación y control de flujo en el backend, por ejemplo el bloque de validaciones en `POST /api/perritos` (una serie de `if` que deciden qué responder), y el ciclo `for` que inserta cada color adicional uno por uno en la tabla intermedia.
+**Imperativo.** Paso a paso, en `POST /api/perritos`: la cadena de validaciones con `if` y el ciclo `for` que inserta cada color adicional. En el frontend, el manejador del formulario en `app.js` valida, arma el `FormData`, envía y actualiza la interfaz.
 
-- **Funcional:** en `backend/routes/perritos.js`, dentro de `GET /api/perritos/:id`, se transforma el resultado de la consulta de colores adicionales usando `map()`, sin mutar el arreglo original y sin ciclos explícitos:
+**Funcional.** En `GET /api/perritos/:id` (`backend/routes/perritos.js`), las filas de colores adicionales se transforman con `map()`, sin mutar el resultado original y sin ciclos explícitos:
+
 ```javascript
-  const nombresColores = coloresAdicionales.map((fila) => fila.nombre);
+const nombresColores = coloresAdicionales.map((fila) => fila.nombre);
 ```
 
-- **Orientado a objetos:** el frontend usa la librería Leaflet, que expone objetos como `L.Marker` y `L.Map` con sus propios métodos (`.bindPopup()`, `.on()`, `.setLatLng()`) — se interactúa con el mapa manipulando instancias de esos objetos, no con funciones sueltas.
+En el frontend, `Array.from(...selectedOptions).map(...)` en `app.js` convierte las opciones elegidas en una lista de ids con el mismo estilo.
+
+**Orientado a objetos.** El frontend usa Leaflet, que trabaja con instancias de objetos (`L.Map`, `L.Marker`) y sus métodos (`.bindPopup()`, `.on()`, `.setLatLng()`); el mapa se controla manipulando esos objetos.
 
 ## Idempotencia del registro
 
-**Problema que resuelve:** si el usuario presiona "Registrar" dos veces, o el celular reintenta la petición por mala señal, no debe crearse un perrito duplicado.
+**Problema:** si el usuario presiona "Registrar" dos veces, o el celular reintenta la petición por mala señal, no debe quedar un perrito duplicado.
 
-**Solución elegida:** una clave de idempotencia generada en el frontend (`idempotency_key`), usando `crypto.randomUUID()`, **al cargar el formulario** (no al enviarlo) — así, si el mismo formulario se envía más de una vez (por doble clic bloqueado a nivel de UI, o por un reintento de red), siempre viaja la misma clave.
+**Solución elegida:** una **clave de idempotencia por formulario**.
+- El frontend genera `idempotency_key` con `crypto.randomUUID()` al cargar la página y la reutiliza en cada intento de envío. Solo genera una nueva después de un registro exitoso, para el siguiente perrito.
+- En la base, `perritos.idempotency_key` es `UNIQUE`.
+- Antes de insertar, el backend busca esa clave. Si ya existe, **no crea nada nuevo**: responde con el registro original (mismo `id`, mismos datos) y `"duplicado_evitado": true`.
 
-En la base de datos, la columna `idempotency_key` de la tabla `perritos` tiene una restricción `UNIQUE`. El backend, antes de insertar, revisa si ya existe un perrito con esa clave:
-- Si no existe, lo crea normalmente.
-- Si ya existe, regresa el registro que ya estaba guardado (mismo `id`, mismos datos), con un campo extra `"duplicado_evitado": true`, **sin crear un registro nuevo**.
+**Por qué esta clave y no una natural:** nombre, foto o ubicación no identifican a un perrito de forma única (puede haber dos perros con el mismo nombre o en el mismo lugar), mientras que la clave por formulario identifica exactamente un intento de registro.
 
-Esto se probó manualmente enviando la misma petición dos veces con Postman, confirmando que el `id` regresado es el mismo y que `SELECT COUNT(*) FROM perritos WHERE idempotency_key = '...'` da como resultado 1, no 2.
+**Capas de protección en el frontend:** el botón "Registrar" se deshabilita mientras se envía; si la respuesta trae `duplicado_evitado`, se avisa "Este perrito ya estaba registrado"; y si se elige la misma foto que ya se registró en la sesión, se pide confirmación (aviso, no bloqueo, porque podrían ser perros distintos). La protección real contra duplicados por reintentos es la del backend.
+
+**Prueba del doble envío (con Postman o similar):**
+1. Envía `POST /api/perritos` (form-data) con `idempotency_key = demo-vivo` y todos los campos, incluida una foto.
+2. Anota el `id` de la respuesta (201).
+3. Envía **exactamente la misma petición** otra vez: responde con el **mismo `id`** y `duplicado_evitado: true`.
+4. Verifica en la base que solo existe un registro:
+
+```sql
+SELECT COUNT(*) FROM perritos WHERE idempotency_key = 'demo-vivo';
+-- resultado esperado: 1
+```
