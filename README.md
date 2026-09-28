@@ -280,3 +280,14 @@ En el frontend, `Array.from(...selectedOptions).map(...)` en `app.js` convierte 
 SELECT COUNT(*) FROM perritos WHERE idempotency_key = 'demo-vivo';
 -- resultado esperado: 1
 ```
+**Prueba automática:** con el backend corriendo, desde la carpeta `backend`:
+
+```powershell
+npm run prueba:doble-envio
+```
+
+Envía dos veces el mismo registro (con la misma `idempotency_key`) y verifica que el segundo envío devuelve el mismo `id`, indica `duplicado_evitado` y no crea otro registro. Deja un perrito de prueba en la base; se borra con:
+
+```sql
+DELETE FROM perritos WHERE idempotency_key LIKE 'prueba-doble-envio-%' AND id > 0;
+```
