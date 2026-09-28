@@ -1,7 +1,7 @@
 // ==========================================================
 // Configuracion
 // ==========================================================
-const API_URL = "http://localhost:3000";
+const API_URL = `http://${location.hostname}:3000`;
 
 // Clave de idempotencia: se genera UNA vez al cargar la pagina,
 // y se reusa si el usuario reintenta el mismo registro (doble clic, mala señal, etc.)
