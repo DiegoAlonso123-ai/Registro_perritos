@@ -206,3 +206,26 @@ button[type="submit"]:hover, #btn-mi-ubicacion:hover { background: var(--color-p
   border-radius: 8px;
   margin-bottom: 10px;
 }
+
+/* ---- Modal de registro exitoso ---- */
+.modal-exito { text-align: center; }
+.modal-exito h2 { margin-top: 0; color: var(--color-exito); }
+
+.exito-botones { display: flex; gap: 8px; margin-top: 16px; }
+
+.exito-botones button {
+  flex: 1;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  background: var(--color-primario);
+  color: white;
+}
+
+.exito-botones button.secundario {
+  background: none;
+  color: var(--color-texto);
+  border: 1px solid var(--color-borde);
+}

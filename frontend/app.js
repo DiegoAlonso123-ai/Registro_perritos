@@ -8,6 +8,10 @@ const API_URL = "http://localhost:3000";
 // Si el registro se completa con exito, se genera una nueva para el siguiente perrito.
 let idempotencyKey = crypto.randomUUID();
 
+// Huellas de las fotos ya registradas en esta sesion (para avisar si se repite la misma foto)
+const huellasEnviadas = new Set();
+const huellaDe = (archivo) => `${archivo.name}-${archivo.size}-${archivo.lastModified}`;
+
 // ==========================================================
 // Navegacion entre pestañas
 // ==========================================================
@@ -166,6 +170,12 @@ form.addEventListener("submit", async (e) => {
     return mostrarMensaje("Un color adicional no puede repetir el color principal", "error");
   }
 
+  // --- Aviso si es la misma foto que ya se registro en esta sesion ---
+  if (huellasEnviadas.has(huellaDe(archivoFoto))) {
+    const seguro = confirm("Ya registraste un perrito con esta misma foto. ¿Quieres registrarlo de nuevo?");
+    if (!seguro) return;
+  }
+
   const datos = new FormData();
   datos.append("nombre", nombre);
   if (razaId) datos.append("raza_id", razaId);
@@ -188,7 +198,12 @@ form.addEventListener("submit", async (e) => {
       return;
     }
 
-    mostrarMensaje("¡Perrito registrado correctamente!", "exito");
+    if (data.duplicado_evitado) {
+      mostrarExito("Este perrito ya estaba registrado", "No se creó un registro nuevo.");
+    } else {
+      mostrarExito("¡Perrito registrado!", `${data.nombre} se guardó correctamente.`);
+    }
+    huellasEnviadas.add(huellaDe(archivoFoto));
     form.reset();
     previewFoto.classList.add("oculto");
     idempotencyKey = crypto.randomUUID(); // nueva clave para el SIGUIENTE perrito
@@ -218,6 +233,7 @@ async function cargarMapaGeneral() {
   try {
     const perritos = await fetch(`${API_URL}/api/perritos`).then((r) => r.json());
 
+    // Limpiamos marcadores anteriores antes de volver a dibujar
     mapaGeneral.eachLayer((capa) => {
       if (capa instanceof L.Marker) mapaGeneral.removeLayer(capa);
     });
@@ -302,6 +318,27 @@ document.getElementById("cerrar-modal").addEventListener("click", () => {
 });
 modal.addEventListener("click", (e) => {
   if (e.target === modal) modal.classList.add("oculto");
+});
+
+// ==========================================================
+// Cuadro de "perrito registrado"
+// ==========================================================
+const modalExito = document.getElementById("modal-exito");
+
+function mostrarExito(titulo, texto) {
+  document.getElementById("exito-titulo").textContent = titulo;
+  document.getElementById("exito-texto").textContent = texto;
+  modalExito.classList.remove("oculto");
+}
+
+document.getElementById("btn-registrar-otro").addEventListener("click", () => {
+  modalExito.classList.add("oculto");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+});
+
+document.getElementById("btn-ver-lista").addEventListener("click", () => {
+  modalExito.classList.add("oculto");
+  document.querySelector('.tab-btn[data-tab="lista"]').click();
 });
 
 // ==========================================================
