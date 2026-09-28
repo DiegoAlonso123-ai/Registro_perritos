@@ -268,3 +268,7 @@ button[type="submit"]:hover, #btn-mi-ubicacion:hover { background: var(--color-p
     max-height: 90vh;
   }
 }
+
+button, select, .tab-btn {
+  touch-action: manipulation;
+}
