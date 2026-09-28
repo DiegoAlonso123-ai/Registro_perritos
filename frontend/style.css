@@ -229,3 +229,42 @@ button[type="submit"]:hover, #btn-mi-ubicacion:hover { background: var(--color-p
   color: var(--color-texto);
   border: 1px solid var(--color-borde);
 }
+
+/* ---- Ajustes para pantallas de celular ---- */
+@media (max-width: 480px) {
+  header h1 { font-size: 1.1rem; }
+
+  .tab-contenido { padding: 12px; }
+
+  form { padding: 14px; gap: 12px; }
+
+  /* En iOS, si un input tiene letra menor a 16px, el navegador hace zoom automatico
+     al tocarlo, lo que descuadra toda la pagina. Con 16px se evita ese zoom. */
+  input, select, textarea, button {
+    font-size: 16px;
+  }
+
+  /* Botones y campos mas altos, mas faciles de tocar con el dedo */
+  input, select {
+    padding: 12px 10px;
+  }
+
+  button[type="submit"], #btn-mi-ubicacion {
+    padding: 14px;
+  }
+
+  #mapa-registro, #mapa-general {
+    height: 220px;
+  }
+
+  #mapa-general { height: 65vh; }
+
+  .lista-perritos {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  }
+
+  .modal-contenido {
+    padding: 16px;
+    max-height: 90vh;
+  }
+}
