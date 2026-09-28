@@ -84,6 +84,13 @@ inputFoto.addEventListener("change", () => {
     previewFoto.src = URL.createObjectURL(archivo);
     previewFoto.classList.remove("oculto");
   }
+
+  // Arreglo para un bug de iOS/Safari: despues de elegir una foto (sobre todo con camara),
+  // la pagina a veces deja de responder al tacto. Forzamos un pequeno scroll para "despertarla".
+  setTimeout(() => {
+    window.scrollTo(window.scrollX, window.scrollY + 1);
+    window.scrollTo(window.scrollX, window.scrollY - 1);
+  }, 300);
 });
 
 // ==========================================================
