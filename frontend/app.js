@@ -3,7 +3,7 @@
 // ==========================================================
 // Configuracion
 // ==========================================================
-const API_URL = "https://under-shots-searching-losing.trycloudflare.com";
+const API_URL = "https://wings-wallet-also-dance.trycloudflare.com";
 
 // Clave de idempotencia compatible con PC y celular
 function generarUUID() {
