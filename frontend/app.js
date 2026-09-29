@@ -3,7 +3,7 @@
 // ==========================================================
 // Configuracion
 // ==========================================================
-const API_URL = `http://${location.hostname}:3000`;
+const API_URL = "https://under-shots-searching-losing.trycloudflare.com";
 
 // Clave de idempotencia compatible con PC y celular
 function generarUUID() {
