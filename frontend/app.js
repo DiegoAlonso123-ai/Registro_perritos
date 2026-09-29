@@ -3,7 +3,8 @@
 // ==========================================================
 // Configuracion
 // ==========================================================
-const API_URL = "https://wings-wallet-also-dance.trycloudflare.com";
+
+const API_URL = `http://${location.hostname}:3000`;
 
 // Clave de idempotencia compatible con PC y celular
 function generarUUID() {
