@@ -184,7 +184,7 @@ En el frontend, la URL del backend está en `frontend/app.js` (`API_URL`). Por d
 - Las imágenes se sirven por el endpoint `GET /api/imagenes/:nombre`; la carpeta nunca se expone directamente. El endpoint también protege contra rutas del tipo `../`.
 - `database/fotos-prueba/` en el repositorio es solo material de instalación; el backend nunca la sirve ni la usa directamente.
 
-## Probarlo desde un celular (Recomendada la opcion B, para no generar problemas en el firewall de windows o mac )
+## Probarlo desde un celular (Recomendada la opcion A)
 
 Hay dos formas. La primera es más simple pero con una limitación; la segunda (con HTTPS) funciona completo, incluida la ubicación automática por GPS.
 
