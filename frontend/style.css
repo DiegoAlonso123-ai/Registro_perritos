@@ -272,3 +272,13 @@ button[type="submit"]:hover, #btn-mi-ubicacion:hover { background: var(--color-p
 button, select, .tab-btn {
   touch-action: manipulation;
 }
+
+#btn-reenviar-prueba {
+  background: #555;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 10px;
+  font-size: 0.85rem;
+  cursor: pointer;
+}

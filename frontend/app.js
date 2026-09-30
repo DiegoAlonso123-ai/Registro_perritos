@@ -1,5 +1,3 @@
-
-
 // ==========================================================
 // Configuracion
 // ==========================================================
@@ -39,6 +37,9 @@ function generarUUID() {
 }
 
 let idempotencyKey = generarUUID();
+
+// Guarda la ultima peticion enviada con exito, para poder reenviarla identica (demo de idempotencia)
+let ultimoEnvio = null;
 
 // Huellas de las fotos ya registradas en esta sesion (para avisar si se repite la misma foto)
 const huellasEnviadas = new Set();
@@ -243,6 +244,8 @@ form.addEventListener("submit", async (e) => {
       mostrarExito("¡Perrito registrado!", `${data.nombre} se guardó correctamente.`);
     }
     huellasEnviadas.add(huellaDe(archivoFoto));
+    ultimoEnvio = datos; // guardamos la peticion exacta, con la misma idempotency_key, para poder reenviarla
+    document.getElementById("btn-reenviar-prueba").classList.remove("oculto");
     form.reset();
     previewFoto.classList.add("oculto");
    idempotencyKey = generarUUID(); // nueva clave para el SIGUIENTE perrito
@@ -378,6 +381,29 @@ document.getElementById("btn-registrar-otro").addEventListener("click", () => {
 document.getElementById("btn-ver-lista").addEventListener("click", () => {
   modalExito.classList.add("oculto");
   document.querySelector('.tab-btn[data-tab="lista"]').click();
+});
+
+// ==========================================================
+// Boton de prueba: reenviar la ultima peticion identica (idempotencia)
+// ==========================================================
+document.getElementById("btn-reenviar-prueba").addEventListener("click", async () => {
+  if (!ultimoEnvio) return;
+  try {
+    const res = await fetch(`${API_URL}/api/perritos`, { method: "POST", body: ultimoEnvio });
+    const data = await res.json();
+
+    if (data.duplicado_evitado) {
+      mostrarExito(
+        "Idempotencia confirmada ✅",
+        `Se reenvio el mismo registro (misma idempotency_key). El servidor devolvio el mismo id (${data.id}) y no creo un perrito nuevo.`
+      );
+    } else {
+      mostrarExito("Resultado inesperado", `HTTP ${res.status}, id ${data.id}`);
+    }
+  } catch (err) {
+    console.error(err);
+    alert("No se pudo reenviar la peticion.");
+  }
 });
 
 // ==========================================================
