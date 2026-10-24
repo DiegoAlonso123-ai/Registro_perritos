@@ -1,0 +1,13 @@
+services:
+  herramientas:
+    image: elixir:1.18-alpine
+    profiles: ["herramientas"]
+    working_dir: /app
+    volumes:
+      - ./funcional:/app
+      - mix_cache:/root/.mix
+      - hex_cache:/root/.hex
+
+volumes:
+  mix_cache:
+  hex_cache:
