@@ -1,4 +1,11 @@
 services:
+  funcional:
+    build: ./funcional
+    environment:
+      TZ: America/Monterrey
+    ports:
+      - "4000:4000"   # temporal, para probar solo; se quita cuando exista el proxy
+
   herramientas:
     image: elixir:1.18-alpine
     profiles: ["herramientas"]
