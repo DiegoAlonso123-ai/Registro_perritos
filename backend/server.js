@@ -9,7 +9,7 @@ const catalogosRouter = require('./routes/catalogos');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+const avistamientosRouter = require('./routes/avistamientos');
 app.use(cors());
 app.use(express.json());
 
@@ -18,6 +18,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/perritos', perritosRouter);
+app.use('/api/avistamientos', avistamientosRouter);
 app.use('/api', catalogosRouter);
 
 // Sirve una imagen a traves del backend (nunca se expone la carpeta directamente)
