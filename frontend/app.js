@@ -2,7 +2,9 @@
 // Configuracion
 // ==========================================================
 
-const API_URL = `http://${location.hostname}:3000`;
+// Con Docker y el túnel todo entra por el proxy, así que las rutas son relativas (/api/...).
+// Con Live Server (puerto 5500) se sigue usando el backend directo, como en el P1.
+const API_URL = location.port === "5500" ? `http://${location.hostname}:3000` : "";
 
 // Clave de idempotencia compatible con PC y celular
 function generarUUID() {
