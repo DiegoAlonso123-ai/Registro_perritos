@@ -37,7 +37,9 @@ services:
   funcional:
     build: ./funcional
     environment:
+      BACKEND_URL: http://backend:3000
       TZ: America/Monterrey
+    depends_on: [backend]
 
   frontend:
     build: ./frontend
