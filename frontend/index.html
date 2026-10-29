@@ -6,6 +6,7 @@
 <title>Registro de Perritos de la Calle</title>
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="style.css" />
+<link rel="stylesheet" href="estadisticas.css" />
 </head>
 <body>
   <header>
@@ -16,6 +17,7 @@
     <button class="tab-btn activo" data-tab="registrar">Registrar</button>
     <button class="tab-btn" data-tab="mapa">Mapa</button>
     <button class="tab-btn" data-tab="lista">Lista</button>
+        <button class="tab-btn" data-tab="estadisticas">Estadísticas</button> 
   </nav>
 
   <!-- PESTAÑA: REGISTRAR -->
@@ -73,6 +75,18 @@
     <div id="lista-perritos" class="lista-perritos"></div>
   </section>
 
+    <!-- PESTAÑA: ESTADÍSTICAS -->
+  <section id="tab-estadisticas" class="tab-contenido">
+    <div class="est-controles">
+      <label>Mostrar los
+        <input type="number" id="estadisticas-n" value="5" min="1" max="20" />
+        más comunes
+      </label>
+      <button type="button" id="estadisticas-actualizar">Actualizar</button>
+    </div>
+    <div id="estadisticas-contenido"></div>
+  </section>
+
   <!-- MODAL DE DETALLE -->
   <div id="modal-detalle" class="modal oculto">
     <div class="modal-contenido">
@@ -95,5 +109,6 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
+    <script src="estadisticas.js"></script>
 </body>
 </html>

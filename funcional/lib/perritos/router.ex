@@ -23,6 +23,8 @@ defmodule Perritos.Router do
         |> send_resp(503, ~s({"error": "no se pudieron obtener los avistamientos"}))
     end
   end
+  
+  forward "/f/estadisticas", to: Perritos.EstadisticasRouter
 
   match _ do
     send_resp(conn, 404, "no encontrado")

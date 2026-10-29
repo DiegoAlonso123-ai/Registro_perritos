@@ -1,0 +1,51 @@
+/* ---- Varias pestañas: que la barra se pueda deslizar en pantallas chicas ---- */
+.tabs { overflow-x: auto; }
+.tab-btn { flex: 1 0 auto; white-space: nowrap; padding: 14px 16px; }
+
+/* ---- Pestaña Estadísticas ---- */
+.est-controles {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+.est-controles label { flex-direction: row; align-items: center; gap: 8px; }
+.est-controles input { width: 70px; }
+.est-controles button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  background: var(--color-primario);
+  color: white;
+  cursor: pointer;
+}
+.est-controles button:hover { background: var(--color-primario-oscuro); }
+
+.est-total { font-weight: 600; margin: 0 0 12px; }
+
+.est-grafica {
+  background: var(--color-tarjeta);
+  border: 1px solid var(--color-borde);
+  border-radius: 10px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+.est-grafica h3 { margin: 0 0 10px; font-size: 1rem; }
+
+.est-fila {
+  display: grid;
+  grid-template-columns: minmax(90px, 38%) 1fr 32px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 6px;
+  font-size: 0.85rem;
+}
+.est-nombre { overflow-wrap: anywhere; }
+.est-pista { background: var(--color-fondo); border-radius: 4px; height: 14px; }
+.est-barra { background: var(--color-primario); border-radius: 4px; height: 100%; min-width: 4px; }
+.est-cantidad { font-weight: 600; text-align: right; }
+
+.est-aviso { color: #777; font-style: italic; }
+.est-error { color: var(--color-error); font-style: normal; }
