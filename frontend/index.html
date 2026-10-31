@@ -7,6 +7,7 @@
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="estadisticas.css" />
+<link rel="stylesheet" href="perdidos.css" />
 </head>
 <body>
   <header>
@@ -17,7 +18,8 @@
     <button class="tab-btn activo" data-tab="registrar">Registrar</button>
     <button class="tab-btn" data-tab="mapa">Mapa</button>
     <button class="tab-btn" data-tab="lista">Lista</button>
-        <button class="tab-btn" data-tab="estadisticas">Estadísticas</button> 
+    <button class="tab-btn" data-tab="estadisticas">Estadísticas</button> 
+    <button class="tab-btn" data-tab="perdidos">Perdidos</button>
   </nav>
 
   <!-- PESTAÑA: REGISTRAR -->
@@ -87,6 +89,18 @@
     <div id="estadisticas-contenido"></div>
   </section>
 
+    <!-- PESTAÑA: PERDIDOS -->
+  <section id="tab-perdidos" class="tab-contenido">
+    <div class="per-controles">
+      <label>Perros que llevan
+        <input type="number" id="perdidos-dias" value="14" min="1" max="365" />
+        días o más sin verse
+      </label>
+      <button type="button" id="perdidos-buscar">Buscar</button>
+    </div>
+    <div id="perdidos-contenido"></div>
+  </section>
+
   <!-- MODAL DE DETALLE -->
   <div id="modal-detalle" class="modal oculto">
     <div class="modal-contenido">
@@ -109,6 +123,7 @@
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="app.js"></script>
-    <script src="estadisticas.js"></script>
+  <script src="estadisticas.js"></script>
+  <script src="perdidos.js"></script>
 </body>
 </html>

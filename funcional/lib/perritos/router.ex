@@ -25,6 +25,7 @@ defmodule Perritos.Router do
   end
   
   forward "/f/estadisticas", to: Perritos.EstadisticasRouter
+  forward "/f/perdidos", to: Perritos.PerdidosRouter
 
   match _ do
     send_resp(conn, 404, "no encontrado")
