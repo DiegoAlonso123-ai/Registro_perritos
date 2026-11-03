@@ -52,6 +52,11 @@ services:
       - "8080:80"   # única entrada; para probar en local: http://localhost:8080
     depends_on: [frontend, backend, funcional]
 
+  tunel:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate --url http://proxy:80
+    depends_on: [proxy]
+
   herramientas:
     image: elixir:1.18-alpine
     profiles: ["herramientas"]
