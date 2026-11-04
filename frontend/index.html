@@ -8,6 +8,7 @@
 <link rel="stylesheet" href="style.css" />
 <link rel="stylesheet" href="estadisticas.css" />
 <link rel="stylesheet" href="perdidos.css" />
+<link rel="stylesheet" href="zonas.css" />
 </head>
 <body>
   <header>
@@ -20,6 +21,7 @@
     <button class="tab-btn" data-tab="lista">Lista</button>
     <button class="tab-btn" data-tab="estadisticas">Estadísticas</button> 
     <button class="tab-btn" data-tab="perdidos">Perdidos</button>
+    <button class="tab-btn" data-tab="zonas">Zonas</button>
   </nav>
 
   <!-- PESTAÑA: REGISTRAR -->
@@ -109,6 +111,19 @@
     </div>
   </div>
 
+    <!-- PESTAÑA: ZONAS -->
+  <section id="tab-zonas" class="tab-contenido">
+    <div class="zon-controles">
+      <label>Celdas de
+        <input type="number" id="zonas-metros" value="500" min="100" max="5000" step="100" />
+        metros
+      </label>
+      <button type="button" id="zonas-actualizar">Actualizar</button>
+    </div>
+    <p id="zonas-resumen" class="zon-resumen"></p>
+    <div id="zonas-mapa"></div>
+  </section>
+
   <!-- MODAL DE REGISTRO EXITOSO -->
   <div id="modal-exito" class="modal oculto">
     <div class="modal-contenido modal-exito">
@@ -125,5 +140,6 @@
   <script src="app.js"></script>
   <script src="estadisticas.js"></script>
   <script src="perdidos.js"></script>
+  <script src="zonas.js"></script>
 </body>
 </html>

@@ -1,0 +1,29 @@
+/* ---- Pestaña Zonas ---- */
+.zon-controles {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+.zon-controles label { flex-direction: row; align-items: center; gap: 8px; }
+.zon-controles input { width: 80px; }
+.zon-controles button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  background: var(--color-primario);
+  color: white;
+  cursor: pointer;
+}
+.zon-controles button:hover { background: var(--color-primario-oscuro); }
+
+.zon-resumen { font-size: 0.9rem; font-weight: 600; margin: 0 0 10px; min-height: 20px; }
+.zon-error { color: var(--color-error); }
+
+#zonas-mapa {
+  height: 65vh;
+  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+}
